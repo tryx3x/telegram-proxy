@@ -1,0 +1,8 @@
+# MTProto RU: маскировка под российские сервисы
+# Обновлено: 2026-09-20 15:09 UTC
+# Прокси: 4
+
+tg://proxy?server=95.182.85.40&port=8843&secret=ee2c4047df04ea16c08c0a4cb094aec14a7465612e686f7473746276732e7275
+tg://proxy?server=45.38.41.173&port=8843&secret=ee2c4047df04ea16c08c0a4cb094aec14a7465612e686f7473746276732e7275
+tg://proxy?server=surfing.suslik-cloud.homes&port=443&secret=eed7f61466f824eafe116a533553e01bca73757266696e672e7375736c696b2d636c6f75642e686f6d6573
+tg://proxy?server=90.156.217.42&port=9443&secret=ddee766b2e636f6da198edcc5871e97f94

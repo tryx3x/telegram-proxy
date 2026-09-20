@@ -1,0 +1,5 @@
+# В репозитории всегда LF: воркфлоу исполняются на Linux-раннере.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.mmdb binary

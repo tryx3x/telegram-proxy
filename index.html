@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telegram Proxy Collector</title>
+<meta name="description" content="Проверенные MTProto и SOCKS5 прокси для Telegram">
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --panel-2: #1c2230; --line: #262d38;
+    --text: #e6edf3; --muted: #8b949e; --accent: #2f81f7; --ok: #3fb950;
+    --warn: #d29922; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+    padding: 0 16px 48px;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  header { padding: 32px 0 20px; }
+  h1 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 14px; margin: 0; }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+  .tab {
+    border: 1px solid var(--line); background: var(--panel); color: var(--text);
+    padding: 7px 14px; border-radius: 999px; cursor: pointer; font-size: 14px;
+  }
+  .tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tab .n { color: var(--muted); margin-left: 6px; font-variant-numeric: tabular-nums; }
+  .tab[aria-selected="true"] .n { color: #d7e6ff; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 14px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .card .info { flex: 1 1 220px; min-width: 0; }
+  .addr { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .tag { font-size: 12px; color: var(--muted); background: var(--panel-2);
+         border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; }
+  .tag.ok { color: var(--ok); border-color: #1e4a2b; }
+  .tag.mask { color: var(--warn); border-color: #4a3a1a; }
+  .actions { display: flex; gap: 8px; }
+  a.btn, button.btn {
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--text);
+    padding: 8px 14px; border-radius: 8px; font-size: 14px; cursor: pointer;
+    text-decoration: none; white-space: nowrap;
+  }
+  a.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 28px; line-height: 1.6; }
+  .state { color: var(--muted); padding: 28px 0; }
+  .state.error { color: #f85149; }
+  @media (max-width: 480px) {
+    .card { align-items: stretch; }
+    .actions { width: 100%; }
+    .actions .btn { flex: 1; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Telegram Proxy Collector</h1>
+    <p class="sub">Прокси, прошедшие настоящий хендшейк протокола, а не просто проверку открытого порта.</p>
+    <p class="meta" id="meta">Загрузка…</p>
+  </header>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div id="list"><p class="state">Загрузка списка…</p></div>
+
+  <p class="note">
+    Нажатие на «Подключить» открывает Telegram и предлагает добавить прокси.
+    Бесплатные прокси не дают анонимности: владелец видит объём и адреса вашего
+    трафика. Не используйте их для входа в банк и не считайте заменой VPN.
+  </p>
+</div>
+
+<script>
+const FILTERS = [
+  { id: "all",  label: "Все",     test: () => true },
+  { id: "ru",   label: "RU",      test: p => p.type === "mtproto" && p.region === "ru" },
+  { id: "eu",   label: "EU",      test: p => p.type === "mtproto" && p.region === "eu" },
+  { id: "us",   label: "US",      test: p => p.type === "mtproto" && p.region === "us" },
+  { id: "asia", label: "ASIA",    test: p => p.type === "mtproto" && p.region === "asia" },
+  { id: "sk",   label: "SOCKS5",  test: p => p.type === "socks5" },
+];
+
+const METHOD_LABEL = {
+  faketls_hmac: "fake-TLS подтверждён",
+  mtproto_respq: "ответ Telegram получен",
+  mtproto_reply: "прокси ответил",
+  socks5_connect: "CONNECT прошёл",
+  socks5_greeting: "SOCKS5 отвечает",
+};
+
+let proxies = [];
+let active = "all";
+
+function tmeLink(p) {
+  return p.link.replace("tg://proxy?", "https://t.me/proxy?").replace("tg://socks?", "https://t.me/socks?");
+}
+
+function render() {
+  const list = document.getElementById("list");
+  const items = proxies.filter(FILTERS.find(f => f.id === active).test);
+  if (!items.length) {
+    list.innerHTML = '<p class="state">В этой категории сейчас пусто. Загляните после следующего обновления.</p>';
+    return;
+  }
+  list.innerHTML = "";
+  for (const p of items) {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const info = document.createElement("div");
+    info.className = "info";
+    const addr = document.createElement("div");
+    addr.className = "addr";
+    addr.textContent = p.host + ":" + p.port;
+    info.appendChild(addr);
+
+    const tags = document.createElement("div");
+    tags.className = "tags";
+    const add = (text, cls) => {
+      if (!text) return;
+      const el = document.createElement("span");
+      el.className = "tag" + (cls ? " " + cls : "");
+      el.textContent = text;
+      tags.appendChild(el);
+    };
+    add(p.type === "mtproto" ? "MTProto" : "SOCKS5");
+    add(Math.round(p.ping * 1000) + " мс");
+    add(p.country);
+    if (p.domain) add("маска " + p.domain, "mask");
+    add(METHOD_LABEL[p.method] || p.method, "ok");
+    if (p.probe_resistant) add("probe-resistant", "ok");
+    info.appendChild(tags);
+    card.appendChild(info);
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    const connect = document.createElement("a");
+    connect.className = "btn primary";
+    connect.href = tmeLink(p);
+    connect.textContent = "Подключить";
+    actions.appendChild(connect);
+
+    const copy = document.createElement("button");
+    copy.className = "btn";
+    copy.textContent = "Копировать";
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(p.link);
+        copy.textContent = "Скопировано";
+      } catch {
+        copy.textContent = p.link;
+      }
+      setTimeout(() => { copy.textContent = "Копировать"; }, 1800);
+    });
+    actions.appendChild(copy);
+    card.appendChild(actions);
+    list.appendChild(card);
+  }
+}
+
+function buildTabs() {
+  const box = document.getElementById("tabs");
+  box.innerHTML = "";
+  for (const f of FILTERS) {
+    const count = proxies.filter(f.test).length;
+    const tab = document.createElement("button");
+    tab.className = "tab";
+    tab.type = "button";
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-selected", String(f.id === active));
+    tab.innerHTML = f.label + '<span class="n">' + count + "</span>";
+    tab.addEventListener("click", () => {
+      active = f.id;
+      buildTabs();
+      render();
+    });
+    box.appendChild(tab);
+  }
+}
+
+async function load() {
+  const meta = document.getElementById("meta");
+  try {
+    const [listResponse, statsResponse] = await Promise.all([
+      fetch("lists/proxies.json", { cache: "no-store" }),
+      fetch("lists/stats.json", { cache: "no-store" }).catch(() => null),
+    ]);
+    if (!listResponse.ok) throw new Error("HTTP " + listResponse.status);
+    proxies = await listResponse.json();
+    proxies.sort((a, b) => a.ping - b.ping);
+
+    let text = "Прокси в списке: " + proxies.length;
+    if (statsResponse && statsResponse.ok) {
+      const stats = await statsResponse.json();
+      if (stats.updated) {
+        text += " · обновлено " + new Date(stats.updated).toLocaleString("ru-RU");
+      }
+    }
+    meta.textContent = text;
+    buildTabs();
+    render();
+  } catch (error) {
+    meta.textContent = "";
+    document.getElementById("list").innerHTML =
+      '<p class="state error">Не удалось загрузить lists/proxies.json: ' + error.message +
+      ". Страница работает после первого успешного прогона сборщика.</p>";
+  }
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# MTProto US и Канада
+# Обновлено: 2026-09-20 15:09 UTC
+# Прокси: 4
+
+tg://proxy?server=2.27.204.136&port=443&secret=f3a91c7e2b84d05a66b0fc9d17e4a238
+tg://proxy?server=danmarki.tokhmemorgh.info&port=7799&secret=dd10400103324995b07c030386e886e7f1
+tg://proxy?server=sachmeh.ghablameh-co.co.im&port=443&secret=0c30628212cbbd7ac519130205525d15
+tg://proxy?server=brisket.varomax.co.uk&port=44300&secret=10400103324995b07c030386e886e7f1
