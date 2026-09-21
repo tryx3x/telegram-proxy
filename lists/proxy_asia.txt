@@ -1,8 +1,9 @@
 # MTProto Азия
-# Обновлено: 2026-09-21 16:19 UTC
-# Прокси: 4
+# Обновлено: 2026-09-21 21:48 UTC
+# Прокси: 5
 
+tg://proxy?server=189.24.106.201&port=2001&secret=ee6b91e8d1f404cb5e6f0d3bf8bafb859c7869756e6f2e636e
 tg://proxy?server=189.24.82.151&port=2001&secret=ee445304eb01ed57a842e8519f19ddda207869756e6f2e636e
 tg://proxy?server=189.24.106.20&port=2001&secret=ee789b69d937c22a545cd99b51270292117869756e6f2e636e
-tg://proxy?server=189.24.106.201&port=2001&secret=ee6b91e8d1f404cb5e6f0d3bf8bafb859c7869756e6f2e636e
+tg://proxy?server=103.161.35.23&port=443&secret=dd79e7010200010007f0030386e24c3add
 tg://proxy?server=171.244.142.193&port=8956&secret=ec66021301e2e6a9ec935292e51c3e60
