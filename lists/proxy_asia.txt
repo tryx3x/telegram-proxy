@@ -1,5 +1,5 @@
 # MTProto Азия
-# Обновлено: 2026-09-25 03:55 UTC
+# Обновлено: 2026-09-25 09:29 UTC
 # Прокси: 1
 
 tg://proxy?server=proxy.jubaoku.com&port=9443&secret=2adab36179e7a39026adf74034615248
