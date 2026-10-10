@@ -1,6 +1,6 @@
 # MTProto Азия
-# Обновлено: 2026-10-10 18:17 UTC
+# Обновлено: 2026-10-10 23:22 UTC
 # Прокси: 2
 
-tg://proxy?server=103.161.35.56&port=443&secret=dd79e7010200010007f0030386e24c3add
 tg://proxy?server=103.161.35.23&port=443&secret=dd79e7010200010007f0030386e24c3add
+tg://proxy?server=103.161.35.56&port=443&secret=dd79e7010200010007f0030386e24c3add
