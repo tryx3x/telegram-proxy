@@ -1,6 +1,11 @@
 # MTProto Азия
-# Обновлено: 2026-10-25 00:06 UTC
-# Прокси: 2
+# Обновлено: 2026-10-25 07:24 UTC
+# Прокси: 7
 
 tg://proxy?server=103.161.35.23&port=443&secret=dd79e7010200010007f0030386e24c3add
-tg://proxy?server=proxy.jubaoku.com&port=9443&secret=2adab36179e7a39026adf74034615248
+tg://proxy?server=luxuryman.sbs&port=4455&secret=dd104462821249bd7ac519130220c25d09
+tg://proxy?server=irluxcars.site&port=4455&secret=dd104462821249bd7ac519130220c25d09
+tg://proxy?server=ahvaz.co.uk&port=4455&secret=dd104462821249bd7ac519130220c25d09
+tg://proxy?server=whiteblox.org&port=4455&secret=dd104462821249bd7ac519130220c25d09
+tg://proxy?server=royaclinic.beauty&port=4455&secret=dd104462821249bd7ac519130220c25d09
+tg://proxy?server=27.124.29.201&port=33306&secret=dd01cdd354110000000000000000415251
