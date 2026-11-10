@@ -1,6 +1,7 @@
 # MTProto Азия
-# Обновлено: 2026-11-10 07:05 UTC
-# Прокси: 2
+# Обновлено: 2026-11-10 16:13 UTC
+# Прокси: 3
 
+tg://proxy?server=t4.myrka.digital&port=443&secret=ee1111222233334444555566667777888874342e6d79726b612e6469676974616c
+tg://proxy?server=t3.myrka.digital&port=444&secret=ee8888777766665555444433332222111174332e6d79726b612e6469676974616c
 tg://proxy?server=103.161.35.56&port=443&secret=dd79e7010200010007f0030386e24c3add
-tg://proxy?server=207.148.71.230&port=443&secret=57fead292571e8c81dd4fdf3e9dfc33d
